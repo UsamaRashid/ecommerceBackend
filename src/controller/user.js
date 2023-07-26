@@ -1,5 +1,32 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const { hashData, verifyHashData } = require("../utils/hashData");
+const createToken = require("../utils/createToken");
+
+const AuthenticateUser = async (data) => {
+  try {
+    const { email, password } = data;
+    const fetchedUser = await User.findOne({ email });
+    if (fetchedUser) {
+      const hashedPassword = fetchedUser.password;
+      const passwordMatch = await verifyHashData(password, hashedPassword);
+      if (passwordMatch) {
+        // create user token
+        const token = await createToken({ userID: fetchedUser._id, email });
+        // assign user token
+        fetchedUser.token = token;
+        return fetchedUser;
+      } else {
+        throw Error("Incorrect Password");
+      }
+    } else {
+      throw Error("Incorrect Email Address");
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 const CreateNewUser = async (data) => {
   try {
     let { name, email, password } = data;
@@ -10,20 +37,15 @@ const CreateNewUser = async (data) => {
       throw Error("User with this email already exists");
     }
     // hash password
-    const hashedPassword = await bcrypt.hash(
-      password,
-      // salt
-      10
-    );
-    console.log("hashPassword", hashedPassword);
+    const hashedPassword = hashData(password);
+
     const newUser = new User({ name, email, password: hashedPassword });
     // Create a new user
     const createdUser = await newUser.save();
-    console.log("createdUser", createdUser);
     return createdUser;
   } catch (error) {
     throw error;
   }
 };
 
-module.exports = { CreateNewUser };
+module.exports = { CreateNewUser, AuthenticateUser };

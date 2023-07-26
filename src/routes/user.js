@@ -1,7 +1,34 @@
 const express = require("express");
-const { CreateNewUser } = require("../controller/user");
+const { CreateNewUser, AuthenticateUser } = require("../controller/user");
 
 const router = express.Router();
+
+// Signin
+router.post("/signin", async (req, res) => {
+  try {
+    let { email, password } = req.body;
+    if (!email || !password) {
+      // validations
+      throw Error("Empty Credentials");
+    } else if (!/^[\w\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+      throw Error("Invalid email address");
+    } else {
+      // trim spaces from end
+      email = email.trim();
+      password = password.trim();
+      const authenticatedUser = await AuthenticateUser({ email, password });
+      res
+        .status(200)
+        .json({
+          id: authenticatedUser.id,
+          name: authenticatedUser.name,
+          token: authenticatedUser.token,
+        });
+    }
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
 
 //Signup
 router.post("/signup", async (req, res) => {
