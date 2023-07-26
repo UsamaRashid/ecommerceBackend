@@ -1,29 +1,6 @@
 const nodemailer = require("nodemailer");
 const { AUTH_EMAIL, AUTH_PASSWORD } = process.env;
 
-// let transporter = nodemailer.createTransport({
-//   //   host: "smtp-mail.outlook.com",
-//   service: "gmail",
-//   auth: {
-//     user: AUTH_EMAIL,
-//     pass: AUTH_PASSWORD,
-//   },
-// });
-// let testAcount = nodemailer.createTestAccount();
-
-// const transporter = nodemailer.createTransport({
-//   host: "smtp.ethereal.net",
-//   port: 465,
-//   //   secure: true,
-//   auth: {
-//     // user: AUTH_EMAIL,
-//     // pass: AUTH_PASSWORD,
-//     //   // TODO: replace `user` and `pass` values from <https://forwardemail.net>
-//     user: testAcount.user,
-//     pass: testAcount.pass,
-//   },
-// });
-
 let transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
