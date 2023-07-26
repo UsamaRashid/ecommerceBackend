@@ -1,7 +1,17 @@
 const express = require("express");
 const { CreateNewUser, AuthenticateUser } = require("../controller/user");
-
+const auth = require("../middleware/auth");
 const router = express.Router();
+
+// Protected Route
+
+router.get("/privateData", auth, (req, res) => {
+  res
+    .status(200)
+    .send(
+      `You are in the private territory of ${req.currentUser.email} and ${req.currentUser.userID}`
+    );
+});
 
 // Signin
 router.post("/signin", async (req, res) => {
@@ -17,13 +27,11 @@ router.post("/signin", async (req, res) => {
       email = email.trim();
       password = password.trim();
       const authenticatedUser = await AuthenticateUser({ email, password });
-      res
-        .status(200)
-        .json({
-          id: authenticatedUser.id,
-          name: authenticatedUser.name,
-          token: authenticatedUser.token,
-        });
+      res.status(200).json({
+        id: authenticatedUser.id,
+        name: authenticatedUser.name,
+        token: authenticatedUser.token,
+      });
     }
   } catch (error) {
     res.status(400).send(error.message);
