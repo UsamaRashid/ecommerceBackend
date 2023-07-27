@@ -8,6 +8,10 @@ const AuthenticateUser = async (data) => {
     const { email, password } = data;
     const fetchedUser = await User.findOne({ email });
     if (fetchedUser) {
+      if (!fetchedUser.verified) {
+        throw Error("Email has not been verified yet, Check your email");
+      }
+
       const hashedPassword = fetchedUser.password;
       const passwordMatch = await verifyHashData(password, hashedPassword);
       if (passwordMatch) {
@@ -36,12 +40,20 @@ const CreateNewUser = async (data) => {
     if (existingUser) {
       throw Error("User with this email already exists");
     }
-    // hash password
-    const hashedPassword = hashData(password);
 
-    const newUser = new User({ name, email, password: hashedPassword });
+    // hash password
+    const hashedPassword = await hashData(password);
+
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+      verified: false,
+    });
     // Create a new user
+
     const createdUser = await newUser.save();
+
     return createdUser;
   } catch (error) {
     throw error;

@@ -1,6 +1,6 @@
 const User = require("../models/user");
 const { sendOTP, verifyOTP, deleteOTP } = require("../controller/otp");
-const sendVerificationOTPEmail = async ({ email }) => {
+const sendVerificationOTPEmail = async (email) => {
   try {
     const existingUser = User.findOne({ email });
     // check if account exists
@@ -8,7 +8,7 @@ const sendVerificationOTPEmail = async ({ email }) => {
       throw Error("There's no account provided with this email");
     }
     const otpDetails = {
-      email,
+      email: email,
       subject: "Email Verification",
       message: "Verify your email with code below",
       duration: 1,
@@ -26,6 +26,8 @@ const verifyUserEmail = async ({ email, otp }) => {
     if (!validOTP) {
       throw Error("Invalid OTP, Check your inbox");
     }
+    // update user record to verified
+    await User.updateOne({ email }, { verified: true });
     const deletedOTP = await deleteOTP({ email });
 
     return validOTP;

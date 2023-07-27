@@ -1,6 +1,7 @@
 const express = require("express");
 const { CreateNewUser, AuthenticateUser } = require("../controller/user");
 const auth = require("../middleware/auth");
+const { sendVerificationOTPEmail } = require("../controller/emaiVerification");
 const router = express.Router();
 
 // Protected Route
@@ -59,6 +60,7 @@ router.post("/signup", async (req, res) => {
 
       // Create a new user
       const newUser = await CreateNewUser({ name, email, password });
+      await sendVerificationOTPEmail(email);
       res
         .status(200)
         .json({ name: newUser.name, email: newUser.email, id: newUser._id });
