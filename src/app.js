@@ -9,7 +9,7 @@ const userRoutes = require("./routes/user");
 const otpRoutes = require("./routes/otp");
 const emailVerificationRoutes = require("./routes/emailVerification");
 const forgotpasswordRoutes = require("./routes/forgotpassword");
-
+const productRoutes = require("./routes/products");
 // create a server
 const app = express();
 app.use(express.json());
@@ -19,5 +19,6 @@ app.use("/user", userRoutes);
 app.use("/otp", otpRoutes);
 app.use("/email_verification", emailVerificationRoutes);
 app.use("/forgot_password", forgotpasswordRoutes);
+app.use("/products", productRoutes);
 
 module.exports = app;

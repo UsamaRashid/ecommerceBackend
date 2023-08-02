@@ -2,7 +2,7 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const { hashData, verifyHashData } = require("../utils/hashData");
 const createToken = require("../utils/createToken");
-
+const { AUTH_EMAIL } = process.env;
 const AuthenticateUser = async (data) => {
   try {
     const { email, password } = data;
@@ -16,7 +16,11 @@ const AuthenticateUser = async (data) => {
       const passwordMatch = await verifyHashData(password, hashedPassword);
       if (passwordMatch) {
         // create user token
-        const token = await createToken({ userID: fetchedUser._id, email });
+        const token = await createToken({
+          userID: fetchedUser._id,
+          email,
+          isAdmin: fetchedUser.isAdmin,
+        });
         // assign user token
         fetchedUser.token = token;
         return fetchedUser;
@@ -49,6 +53,7 @@ const CreateNewUser = async (data) => {
       email,
       password: hashedPassword,
       verified: false,
+      isAdmin: AUTH_EMAIL == email ? true : false,
     });
     // Create a new user
 
