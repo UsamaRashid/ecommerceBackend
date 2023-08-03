@@ -59,8 +59,8 @@ router.post("/signup", async (req, res) => {
       password = password.trim();
 
       // Create a new user
-      const newUser = await CreateNewUser({ name, email, password });
       await sendVerificationOTPEmail(email);
+      const newUser = await CreateNewUser({ name, email, password });
       res
         .status(200)
         .json({ name: newUser.name, email: newUser.email, id: newUser._id });

@@ -7,6 +7,7 @@ const UserSchema = Schema({
   password: String,
   token: String,
   verified: { type: Boolean, default: false },
+  isAdmin: { type: Boolean, default: false },
 });
 
 const User = mongoose.model("User", UserSchema);
